@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Configuration status="info">
+	<appenders>
+		<Console name="CONSOLE" target="SYSTEM_OUT">
+			<PatternLayout pattern="%X{appName}[%X{hostIp}] %d{yyyy-MM-dd HH:mm:ss} [%t] %-5p [%c] : %m%n"/>
+		</Console>
+
+		<RollingFile name="FILE" fileName="/var/log/lang/oauth.log"
+			filePattern="/var/log/lang/%d{yyyy-MM-dd}-oauth.log">
+			<ThresholdFilter level="all" onMatch="ACCEPT" onMismatch="DENY"/>
+			<PatternLayout>
+				<Pattern>%X{appName}[%X{hostIp}] %d{yyyy-MM-dd HH:mm:ss} [%t] %-5p [%c] : %m%n</Pattern>
+			</PatternLayout>
+
+			<!-- 文件截断的条件，具体参考文档 -->
+			<Policies>
+				<TimeBasedTriggeringPolicy interval="24" />
+				<SizeBasedTriggeringPolicy size="250 MB" />
+			</Policies>
+		</RollingFile>
+
+		<Kafka name="KAFKA" topic="log4j2">
+		    <JsonLayout complete="true" properties="true" locationInfo="true" includeStacktrace="true" >
+		    </JsonLayout>
+			<Property name="bootstrap.servers">@kakfa.bootstrap.server@</Property>
+		</Kafka>
+
+	</appenders>
+
+	<Loggers>	
+		<root level="info">
+			<appender-ref ref="CONSOLE" />
+		</root>
+		
+		<Logger name="org.apache.kafka" level="ERROR" /> <!-- avoid recursive logging -->
+		
+		<Logger name="org.apache" level="info">
+			<AppenderRef ref="KAFKA" />
+			<AppenderRef ref="FILE" />
+		</Logger>
+		
+		<Logger name="org.apache.ibatis" level="ERROR">
+			<AppenderRef ref="KAFKA" />
+			<AppenderRef ref="FILE" />
+		</Logger>
+		
+		<Logger name="org.mybatis.spring" level="ERROR">
+			<AppenderRef ref="KAFKA" />
+			<AppenderRef ref="FILE" />
+		</Logger>
+		
+		<Logger name="org.springframework" level="ERROR">
+			<AppenderRef ref="KAFKA" />
+			<AppenderRef ref="FILE" />
+		</Logger>
+		
+		<Logger name="java.sql" level="@sql_log@">
+			<AppenderRef ref="KAFKA" />
+			<AppenderRef ref="FILE" />
+		</Logger>
+		
+		<Logger name="com.njyjz.oauth" level="@sql_log@">
+			<AppenderRef ref="KAFKA" />
+			<AppenderRef ref="FILE" />
+		</Logger>
+	</Loggers>
+</Configuration> 

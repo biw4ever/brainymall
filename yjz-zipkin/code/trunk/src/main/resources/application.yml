@@ -1,0 +1,38 @@
+server:
+  port: 8801
+  
+#配置kafka
+spring:
+  application :
+     name : yjz-zipkin
+  sleuth:
+    enabled: false
+    sampler:
+      percentage: 1.0
+  cloud:
+    stream:
+      kafka:
+        binder:
+          brokers: @kakfa.bootstrap.server@
+          zkNodes: @kakfa.zk.nodes@
+kafka:
+    bootstrapServers: @kakfa.bootstrap.server@
+    groupId: test
+    sessionTimeout: 30000
+    maxPollRecords: 50
+    autoOffsetReset: latest
+    autoCommitIntervalMs: 2000
+    consumerRequestTimeoutMs: 32000
+    concurrency: 10
+
+#zipkin:
+#  storage:
+#    type: elasticsearch
+#    StorageComponent: elasticsearch
+#    elasticsearch:
+#      cluster: elasticsearch
+#      max-requests: 30
+#      index: zipkin
+#      index-shards: 3
+#      index-replicas: 1
+#      hosts: @es.address@
